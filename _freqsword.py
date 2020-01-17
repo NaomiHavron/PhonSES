@@ -114,7 +114,7 @@ mon.setSizePix([1600, 900])  # [1280,720]
 # mon.setSizePix([1600,900])
 # mon.setSizePix([2560,1440])
 mon.saveMon()
-Window = visual.Window([600, 600], fullscr=False, monitor=mon, color=[0, 0, 0], units="pix")  #
+Window = visual.Window([600, 600], fullscr=True, monitor=mon, color=[0, 0, 0], units="pix")  #
 # Window = visual.Window([1600,900], fullscr=True, monitor=mon, color=[0,0,0], units="pix")#
 # Window = visual.Window([2560, 1440], fullscr=True, monitor=mon, color=[0,0,0], units="pix")
 mouse = event.Mouse()
@@ -669,16 +669,9 @@ os.chdir('C:/Users/lscpuser/Desktop/Monica - Dev')
 ###### THE EXPE ##########
 ###########################
 ##########################
-
-AUDIOS = {"Chien_Image.jpg": "ko_chien_48000.wav",
-"Poussette_Image.jpg": "ka_poussette_48000.wav",
-"Lapin_Image.jpg": "ko_lapin_48000.wav",
-"Tracteur_Image.jpg": "ka_tracteur_48000.wav",
-"Cochon_Image.jpg": "ko_cochon_48000.wav",
-"Biberon_Image.jpg": "ka_biberon_48000.wav",
-"Souris_Image.jpg":"ko_souris_48000.wav",
-"Chaussure_Image.jpg": "ka_chaussure_48000.wav"}
-
+stim_path="C:\Users\lscpuser\Desktop\Chiara\FreqsStimuli"
+import glob
+AUDIOS=glob.glob(stim_path+"\*.wav")
 
 
 def monitor_attention(trackingfun):
@@ -697,11 +690,11 @@ def monitor_attention(trackingfun):
 
 def New_train(AUDIOS):
     trial=0
-    for k,v in AUDIOS.items():
+    for v in AUDIOS:
         trial += 1
         print("TRIAL NR: ", trial)
         tgt_sound = v
-        Image.image = k
+        Image.image = "checkerboard.jpg"
         Image.draw()
         Image.opacity = 1
         Window.flip()
@@ -711,7 +704,7 @@ def New_train(AUDIOS):
         trialInit(trial)
         ## Plays sound ###
         tgt_sound = pygame.mixer.Sound(tgt_sound)
-        timeout= time.time() + tgt_sound.get_length() +1
+        timeout= time.time() + tgt_sound.get_length()
         tgt_sound = pygame.mixer.Sound(tgt_sound)
         tgt_sound.play()
         while time.time() < timeout:
@@ -731,7 +724,7 @@ def New_train(AUDIOS):
                     tagEvent("Trial Interrupted", particNum, trial, Momes, Image)
                     break
             else:
-                print "blink"
+                print "gaze on"
                 continue
         while pygame.mixer.get_busy():
             continue
@@ -749,6 +742,10 @@ def New_train(AUDIOS):
             Reduce()
             break
         Reduce()
+        while not trackerFX(TRACKER_FX_RADIUS):
+            Window.flip()
+            event.clearEvents()
+            Reduce()
 
 ###########################
 ## SET THE TRIAL COUNTER ##
@@ -757,7 +754,7 @@ N_TRIALS = 1
 
 ####################
 ## INITIATE SOUND ##
-pygame.mixer.init(48000, -16, 2, 2048)
+pygame.mixer.init(32000, -16, 2, 2048)
 
 ################
 ### PLAY VIDEO ##
